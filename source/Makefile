@@ -1,5 +1,5 @@
 diary : main.c
-	gcc main.c -o diary
+	gcc main.c encrypt.c decrypt.c -o diary
 
 clean :
 	rm diary
