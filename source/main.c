@@ -11,6 +11,7 @@ char CURRENT_DIR[DIR_SIZE];
 char* TEMP_FILE_SUFFIX = ".tmp";
 char DIARY_PATH[200];
 char TEMP_DIARY_PATH[204];
+char PASSWORD[200];
 
 int createDiaryFileName() {
     struct tm* p;
@@ -41,7 +42,7 @@ int createNewDiary() {
         print_num(getpid());
         int status;
         waitpid(pid, &status, 0);
-        encrypt(DIARY_PATH, TEMP_DIARY_PATH, "liuzeng", 7);
+        encrypt(DIARY_PATH, TEMP_DIARY_PATH, PASSWORD, strlen(PASSWORD));
         remove(TEMP_DIARY_PATH);
         printf("child return num is ");
         print_num(status);
@@ -59,7 +60,7 @@ int readDiary(char* path) {
     strcpy(TEMP_DIARY_PATH, path);
     strcat(TEMP_DIARY_PATH, TEMP_FILE_SUFFIX);
     pid_t pid = 0;
-    decrypt(TEMP_DIARY_PATH, path, "liuzeng", 7);
+    decrypt(TEMP_DIARY_PATH, path, PASSWORD, strlen(PASSWORD));
     pid = fork();
     if (pid) {
         printf("read Diary parent ");
@@ -84,6 +85,8 @@ int main() {
     getcwd(CURRENT_DIR, DIR_SIZE);
 
     printf("Welcome to liuzeng's diary!\n");
+    printf("please input your password:");
+    scanf("%s", PASSWORD);
     printf("What can I do for you?\n");
     printf("1 : read diary\n");
     printf("2 : create new diary\n");
