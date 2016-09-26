@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <time.h>
+#include <string.h>
 
 #define DIR_SIZE 200
 char CURRENT_DIR[DIR_SIZE];
@@ -10,7 +12,20 @@ char CURRENT_DIR[DIR_SIZE];
 int main() {
     
     getcwd(CURRENT_DIR, DIR_SIZE);
-    print_str(CURRENT_DIR);
+    struct tm* p;
+    time_t timep;
+    time(&timep);
+    p = localtime(&timep);
+    char buffer[20];
+    sprintf(buffer, "%04d%02d%02d%02d%02d%02d", 1900 + p->tm_year,1 + p->tm_mon, p->tm_mday, p->tm_hour, p->tm_min, p->tm_sec);
+
+    /*print_str(CURRENT_DIR);*/
+    char path[200];
+    strcpy(path, CURRENT_DIR);
+    int len = strlen(CURRENT_DIR);
+    path[len] = '/';
+    strcat(path, buffer);
+    print_str(path);
     printf("Welcome to liuzeng's diary!\n");
     printf("What can I do for you?\n");
     printf("0 : read diary\n");
@@ -40,7 +55,9 @@ int main() {
     } else {
         printf("child ");
         print_num(getpid());
-        sleep(5);
+        /*sleep(5);*/
+        char* argv[] = {"vim", path, (char*)0};
+        execv("/usr/bin/vim", argv);
     }
     return 0;
 }
